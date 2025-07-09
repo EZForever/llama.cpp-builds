@@ -1,0 +1,99 @@
+name: build
+
+on:
+  # Build file modifications
+  push:
+    branches: [ 'master' ]
+    paths: [ '.github/workflows/build.yml', '.devops/**' ]
+  #pull_request:
+  #  branches: [ 'master' ]
+
+  # Daily rebuild
+  schedule:
+    - cron: "0 4 * * *"
+
+  # Manual rebuild, in case of some important upstream change
+  workflow_dispatch:
+
+jobs:
+  opencl-intel:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout llama.cpp
+        uses: actions/checkout@v4
+        with:
+          repository: ggml-org/llama.cpp
+          path: llama.cpp
+
+      - name: Install build deps
+        run: '
+          sudo apt-get update
+          
+          #sudo apt-get install -y build-essential cmake git rustc cargo
+          
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libssl-dev libcurl4-openssl-dev ocl-icd-opencl-dev
+        '
+
+      - name: CMake
+        run: "
+          cmake llama.cpp -B llama.cpp/build
+            -DCMAKE_BUILD_TYPE=Release
+            -DCMAKE_INSTALL_RPATH='$ORIGIN'
+            -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
+            -DGGML_BACKEND_DL=ON
+            -DGGML_CPU_ALL_VARIANTS=ON
+            -DGGML_RPC=ON
+            -DGGML_OPENCL=ON
+            -DGGML_OPENCL_USE_ADRENO_KERNELS=OFF
+            -DGGML_CCACHE=OFF
+            -DGGML_OPENMP=OFF
+            -DLLAMA_BUILD_TESTS=OFF
+            -DLLAMA_BUILD_EXAMPLES=OFF
+            -DLLAMA_BUILD_TOOLS=ON
+            -DLLAMA_BUILD_SERVER=ON
+            -DLLAMA_CURL=ON
+            -DLLAMA_LLGUIDANCE=ON
+            -DLLAMA_SERVER_SSL=ON
+          
+          cmake --build llama.cpp/build
+            -j $(nproc)
+          
+          find llama.cpp/build/bin -type f -executable -exec strip {} \\;
+        "
+
+      - name: Build and push Docker image (tools)
+        uses: macbre/push-to-ghcr@v13
+        with:
+          dockerfile: .devops/tools-opencl-intel.Dockerfile
+          context: llama.cpp/build/bin
+          image_name: ${{ github.repository }}
+          image_tag: tools-opencl-intel
+          github_token: ${{ secrets.GHCR_ACCESS_TOKEN }}
+
+      - name: Copy additional contents
+        if: false
+        run: '
+          mkdir llama.cpp/build/python
+        
+          cp -r -t llama.cpp/build/bin
+            llama.cpp/*.py
+            llama.cpp/gguf-py
+            llama.cpp/requirements
+            llama.cpp/requirements.txt
+            llama.cpp/.devops/tools.sh
+        '
+
+      - name: Build and push Docker image (full)
+        if: false
+        uses: macbre/push-to-ghcr@v13
+        with:
+          dockerfile: .devops/full-opencl-intel.Dockerfile
+          context: llama.cpp/build/bin
+          image_name: ${{ github.repository }}
+          image_tag: tools-opencl-intel
+          github_token: ${{ secrets.GHCR_ACCESS_TOKEN }}
+
