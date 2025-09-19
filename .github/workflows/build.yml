@@ -50,7 +50,6 @@ jobs:
             -DGGML_OPENCL=ON
             -DGGML_OPENCL_USE_ADRENO_KERNELS=OFF
             -DGGML_CCACHE=OFF
-            -DGGML_OPENMP=OFF
             -DLLAMA_BUILD_TESTS=OFF
             -DLLAMA_BUILD_EXAMPLES=OFF
             -DLLAMA_BUILD_TOOLS=ON
