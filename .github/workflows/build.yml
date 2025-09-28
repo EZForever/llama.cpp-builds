@@ -55,8 +55,8 @@ jobs:
             -DLLAMA_BUILD_TOOLS=ON
             -DLLAMA_BUILD_SERVER=ON
             -DLLAMA_CURL=ON
+            -DLLAMA_OPENSSL=ON
             -DLLAMA_LLGUIDANCE=ON
-            -DLLAMA_SERVER_SSL=ON
           
           cmake --build llama.cpp/build
             -j $(nproc)
