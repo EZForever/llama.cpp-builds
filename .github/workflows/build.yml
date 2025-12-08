@@ -35,7 +35,7 @@ jobs:
           
           #sudo apt-get install -y build-essential cmake git rustc cargo
           
-          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libssl-dev libcurl4-openssl-dev ocl-icd-opencl-dev
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libssl-dev ocl-icd-opencl-dev
         '
 
       - name: CMake
@@ -54,7 +54,7 @@ jobs:
             -DLLAMA_BUILD_EXAMPLES=OFF
             -DLLAMA_BUILD_TOOLS=ON
             -DLLAMA_BUILD_SERVER=ON
-            -DLLAMA_CURL=ON
+            -DLLAMA_CURL=OFF
             -DLLAMA_OPENSSL=ON
             -DLLAMA_LLGUIDANCE=ON
           

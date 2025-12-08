@@ -1,7 +1,7 @@
 FROM ubuntu:24.04
 
 RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y libgomp1 openssl curl intel-opencl-icd clinfo \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y libgomp1 openssl intel-opencl-icd clinfo \
     && apt autoremove -y \
     && apt clean -y \
     && rm -rf /tmp/* /var/tmp/* \
