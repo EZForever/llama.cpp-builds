@@ -54,8 +54,6 @@ jobs:
             -DLLAMA_BUILD_EXAMPLES=OFF
             -DLLAMA_BUILD_TOOLS=ON
             -DLLAMA_BUILD_SERVER=ON
-            -DLLAMA_CURL=OFF
-            -DLLAMA_OPENSSL=ON
             -DLLAMA_LLGUIDANCE=ON
           
           cmake --build llama.cpp/build
