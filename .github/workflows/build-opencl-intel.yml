@@ -1,4 +1,4 @@
-name: build
+name: build-opencl-intel
 
 on:
   # Build file modifications
@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  opencl-intel:
+  build:
     runs-on: ubuntu-24.04
 
     steps:
