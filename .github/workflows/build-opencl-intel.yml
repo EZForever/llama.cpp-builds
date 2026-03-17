@@ -4,7 +4,7 @@ on:
   # Build file modifications
   push:
     branches: [ 'master' ]
-    paths: [ '.github/workflows/build.yml', '.devops/**' ]
+    paths: [ '.github/workflows/build-opencl-intel.yml', '.devops/*-opencl-intel.Dockerfile' ]
   #pull_request:
   #  branches: [ 'master' ]
 
