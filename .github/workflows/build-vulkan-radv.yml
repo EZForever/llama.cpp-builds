@@ -1,0 +1,42 @@
+name: build-vulkan-radv
+
+on:
+  # Build file modifications
+  push:
+    branches: [ 'master' ]
+    paths: [ '.github/workflows/build-vulkan-radv.yml', '.devops/*-vulkan-radv.Dockerfile' ]
+  #pull_request:
+  #  branches: [ 'master' ]
+
+  # Daily rebuild
+  schedule:
+    - cron: "0 4 * * *"
+
+  # Manual rebuild, in case of some important upstream change
+  workflow_dispatch:
+
+jobs:
+  build:
+    # NOTE: Github Actions does not support Ubuntu 26.04 yet, thus deferring build to Docker
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Checkout llama.cpp
+        uses: actions/checkout@v4
+        with:
+          repository: ggml-org/llama.cpp
+          path: llama.cpp
+
+      - name: Build and push Docker image (tools)
+        uses: macbre/push-to-ghcr@v13
+        with:
+          dockerfile: .devops/build-vulkan-radv.Dockerfile
+          context: .
+          image_name: ${{ github.repository }}
+          image_tag: tools-vulkan-radv
+          github_token: ${{ secrets.GHCR_ACCESS_TOKEN }}
+          extra_args: "--target tools"
+
