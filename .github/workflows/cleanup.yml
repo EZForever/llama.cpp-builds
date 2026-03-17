@@ -21,7 +21,7 @@ jobs:
           echo "REPOSITORY_NAME=$REPOSITORY_NAME" >> $GITHUB_ENV
 
       - name: Delete untagged Docker images
-        uses: Chizkiyahu/delete-untagged-ghcr-action@v4
+        uses: Chizkiyahu/delete-untagged-ghcr-action@v6
         with:
           token: ${{ secrets.GHCR_ACCESS_TOKEN }}
           owner_type: user

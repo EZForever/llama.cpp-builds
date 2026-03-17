@@ -22,16 +22,16 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Checkout llama.cpp
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ggml-org/llama.cpp
           path: llama.cpp
 
       - name: Build and push Docker image (tools)
-        uses: macbre/push-to-ghcr@v13
+        uses: macbre/push-to-ghcr@v16
         with:
           dockerfile: .devops/build-vulkan-radv.Dockerfile
           context: .
