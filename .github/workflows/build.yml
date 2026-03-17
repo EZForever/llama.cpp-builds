@@ -33,7 +33,7 @@ jobs:
         run: '
           sudo apt-get update
           
-          #sudo apt-get install -y build-essential cmake git rustc cargo
+          #sudo apt-get install -y build-essential cmake git
           
           DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libssl-dev ocl-icd-opencl-dev
         '
@@ -54,7 +54,6 @@ jobs:
             -DLLAMA_BUILD_EXAMPLES=OFF
             -DLLAMA_BUILD_TOOLS=ON
             -DLLAMA_BUILD_SERVER=ON
-            -DLLAMA_LLGUIDANCE=ON
           
           cmake --build llama.cpp/build
             -j $(nproc)
