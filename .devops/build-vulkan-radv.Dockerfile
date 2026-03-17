@@ -28,7 +28,7 @@ RUN cmake /llama.cpp -B /llama.cpp/build \
     && find /llama.cpp/build/bin \
         -type f \
         -executable \
-        -exec strip {} \\;
+        -exec strip {} ';'
 
 # ---
 
