@@ -5,6 +5,7 @@ ARG UBUNTU_VERSION=26.04
 FROM ubuntu:$UBUNTU_VERSION AS build
 
 RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential cmake git libssl-dev libvulkan-dev glslc glslang-tools
 
 COPY ./llama.cpp /llama.cpp
@@ -35,9 +36,10 @@ RUN cmake /llama.cpp -B /llama.cpp/build \
 FROM ubuntu:$UBUNTU_VERSION AS base
 
 RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y libgomp1 openssl mesa-vulkan-drivers vulkan-tools \
-    && apt autoremove -y \
-    && apt clean -y \
+    && apt-get autoremove --purge -y \
+    && apt-get clean -y \
     && rm -rf /tmp/* /var/tmp/* \
     && find /var/cache/apt/archives /var/lib/apt/lists -not -name lock -type f -delete \
     && find /var/cache -type f -delete
