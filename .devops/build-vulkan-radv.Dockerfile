@@ -6,7 +6,7 @@ FROM ubuntu:$UBUNTU_VERSION AS build
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential cmake git libssl-dev libvulkan-dev glslc glslang-tools
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential cmake git libssl-dev libvulkan-dev spirv-headers glslc glslang-tools
 
 COPY ./llama.cpp /llama.cpp
 
