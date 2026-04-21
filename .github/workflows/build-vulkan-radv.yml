@@ -25,6 +25,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Checkout llama.cpp
+        id: checkout_llamacpp
         uses: actions/checkout@v6
         with:
           repository: ggml-org/llama.cpp
@@ -38,5 +39,10 @@ jobs:
           image_name: ${{ github.repository }}
           image_tag: tools-vulkan-radv
           github_token: ${{ secrets.GHCR_ACCESS_TOKEN }}
-          extra_args: "--target tools"
+          extra_args: >-
+            --target tools
+            --label org.opencontainers.image.title="llama.cpp"
+            --label org.opencontainers.image.description="LLM inference in C/C++"
+            --label org.opencontainers.image.url="https://github.com/ggml-org/llama.cpp"
+            --label org.opencontainers.image.version=${{ steps.checkout_llamacpp.outputs.commit }}
 
