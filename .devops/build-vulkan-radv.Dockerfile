@@ -42,7 +42,8 @@ RUN apt-get update \
     && apt-get clean -y \
     && rm -rf /tmp/* /var/tmp/* \
     && find /var/cache/apt/archives /var/lib/apt/lists -not -name lock -type f -delete \
-    && find /var/cache -type f -delete
+    && find /var/cache -type f -delete \
+    && setcap -r /usr/bin/nvtop
 
 # ---
 
