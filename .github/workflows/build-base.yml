@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        image: [build, opencl-intel, vulkan-radv]
+        image: [ build, opencl-intel, vulkan-radv ]
 
     steps:
       - name: Checkout
