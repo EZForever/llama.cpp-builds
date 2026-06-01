@@ -4,7 +4,11 @@ on:
   # Build file modifications
   push:
     branches: [ 'master' ]
-    paths: [ '.github/workflows/build-opencl-intel.yml', '.devops/*-opencl-intel.Dockerfile' ]
+    paths: [
+      '.github/workflows/build-opencl-intel.yml',
+      '.devops/*-opencl-intel.Dockerfile',
+      '!.devops/base-opencl-intel.Dockerfile'
+    ]
   #pull_request:
   #  branches: [ 'master' ]
 
@@ -17,7 +21,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        image: [ tools ]
 
     steps:
       - name: Checkout
@@ -30,48 +38,16 @@ jobs:
           repository: ggml-org/llama.cpp
           path: llama.cpp
 
-      - name: Install build deps
-        run: '
-          sudo apt-get update
-          
-          #sudo apt-get install -y build-essential cmake git
-          
-          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y libssl-dev ocl-icd-opencl-dev
-        '
-
-      - name: CMake
-        run: "
-          cmake llama.cpp -B llama.cpp/build
-            -DCMAKE_BUILD_TYPE=Release
-            -DCMAKE_INSTALL_RPATH='$ORIGIN'
-            -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON
-            -DGGML_BACKEND_DL=ON
-            -DGGML_CPU_ALL_VARIANTS=ON
-            -DGGML_RPC=ON
-            -DGGML_OPENCL=ON
-            -DGGML_OPENCL_USE_ADRENO_KERNELS=OFF
-            -DGGML_CCACHE=OFF
-            -DLLAMA_BUILD_TESTS=OFF
-            -DLLAMA_BUILD_EXAMPLES=OFF
-            -DLLAMA_BUILD_TOOLS=ON
-            -DLLAMA_BUILD_SERVER=ON
-          
-          cmake --build llama.cpp/build
-            --config Release
-            -j $(nproc)
-          
-          find llama.cpp/build/bin -type f -executable -exec strip {} \\;
-        "
-
-      - name: Build and push Docker image (tools)
+      - name: Build and push Docker image (${{ matrix.image }})
         uses: macbre/push-to-ghcr@v16
         with:
-          dockerfile: .devops/tools-opencl-intel.Dockerfile
-          context: llama.cpp/build/bin
+          dockerfile: .devops/${{ matrix.image }}-opencl-intel.Dockerfile
+          context: .
           image_name: ${{ github.repository }}
-          image_tag: tools-opencl-intel
+          image_tag: ${{ matrix.image }}-opencl-intel
           github_token: ${{ secrets.GHCR_ACCESS_TOKEN }}
           extra_args: >-
+            --target target
             --label org.opencontainers.image.title="llama.cpp"
             --label org.opencontainers.image.description="LLM inference in C/C++"
             --label org.opencontainers.image.url="https://github.com/ggml-org/llama.cpp"
