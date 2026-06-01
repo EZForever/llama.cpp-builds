@@ -2,7 +2,7 @@ FROM ghcr.io/ezforever/llama.cpp-builds:base-build AS build
 
 COPY ./llama.cpp /llama.cpp
 
-RUN cmake /llama.cpp -B /llama.cpp/build \
+RUN cmake /llama.cpp -G Ninja -B /llama.cpp/build \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_RPATH='$ORIGIN' \
         -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON \
