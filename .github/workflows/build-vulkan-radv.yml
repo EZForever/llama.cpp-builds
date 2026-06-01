@@ -4,7 +4,11 @@ on:
   # Build file modifications
   push:
     branches: [ 'master' ]
-    paths: [ '.github/workflows/build-vulkan-radv.yml', '.devops/*-vulkan-radv.Dockerfile' ]
+    paths: [
+      '.github/workflows/build-vulkan-radv.yml',
+      '.devops/*-vulkan-radv.Dockerfile',
+      '!.devops/base-vulkan-radv.Dockerfile',
+    ]
   #pull_request:
   #  branches: [ 'master' ]
 
@@ -17,8 +21,11 @@ on:
 
 jobs:
   build:
-    # NOTE: Github Actions does not support Ubuntu 26.04 yet, thus deferring build to Docker
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        image: [ tools ]
 
     steps:
       - name: Checkout
@@ -31,16 +38,16 @@ jobs:
           repository: ggml-org/llama.cpp
           path: llama.cpp
 
-      - name: Build and push Docker image (tools)
+      - name: Build and push Docker image (${{ matrix.image }})
         uses: macbre/push-to-ghcr@v16
         with:
-          dockerfile: .devops/build-vulkan-radv.Dockerfile
+          dockerfile: .devops/${{ matrix.image }}-vulkan-radv.Dockerfile
           context: .
           image_name: ${{ github.repository }}
-          image_tag: tools-vulkan-radv
+          image_tag: ${{ matrix.image }}-vulkan-radv
           github_token: ${{ secrets.GHCR_ACCESS_TOKEN }}
           extra_args: >-
-            --target tools
+            --target target
             --label org.opencontainers.image.title="llama.cpp"
             --label org.opencontainers.image.description="LLM inference in C/C++"
             --label org.opencontainers.image.url="https://github.com/ggml-org/llama.cpp"
