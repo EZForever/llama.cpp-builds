@@ -38,6 +38,14 @@ jobs:
           repository: ggml-org/llama.cpp
           path: llama.cpp
 
+      # XXX: `vulkan-shaders-gen` run shader compilers in parallel and have a chance of exhausting memory
+      # Set a swap space to spill the memory spike to disk
+      # Inspired from https://github.com/ggml-org/llama.cpp/issues/24393#issuecomment-4671721829
+      - name: Set swap space
+        uses: pierotofy/set-swap-space@master
+        with:
+          swap-size-gb: 16
+
       - name: Build and push Docker image (${{ matrix.image }})
         uses: macbre/push-to-ghcr@v16
         with:
