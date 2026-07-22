@@ -37,6 +37,8 @@ jobs:
         with:
           repository: ggml-org/llama.cpp
           path: llama.cpp
+          fetch-depth: 0
+          filter: tree:0
 
       # XXX: `vulkan-shaders-gen` run shader compilers in parallel and have a chance of exhausting memory
       # Set a swap space to spill the memory spike to disk
